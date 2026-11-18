@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Package the signed release payload for OpenWrt 24.10.5 x86/64.
+# Package the signed release payload for OpenWrt 24.10.5.
 set -euo pipefail
 umask 022
-: "${IMAGEBUILDER:?Set IMAGEBUILDER to the extracted OpenWrt 24.10.5 x86/64 ImageBuilder}"
+: "${IMAGEBUILDER:?Set IMAGEBUILDER to the extracted OpenWrt 24.10.5 ImageBuilder for the target}"
 : "${APK_KEYS_DIR:?Set APK_KEYS_DIR to a directory containing the release APK public key}"
 : "${USIGN_KEY:?Set USIGN_KEY to the feed signing key (public key in USIGN_KEY.pub)}"
 input=$(realpath "${1:?Supply the signed v2rayblisc APK}")
@@ -18,17 +18,29 @@ install -d -m755 "$root" "$feed"
 "$apk" --keys-dir "$APK_KEYS_DIR" verify "$input"
 "$apk" adbdump "$input" > "$stage/metadata"
 grep -qx '  name: v2rayblisc' "$stage/metadata"
-grep -qx '  arch: x86_64' "$stage/metadata"
+arch=$(sed -n 's/^  arch: //p' "$stage/metadata")
+case "$arch" in
+  x86_64|aarch64_cortex-a53) ;;
+  *) echo "Unsupported OpenWrt architecture: $arch" >&2; exit 1 ;;
+esac
 version=$(sed -n 's/^  version: //p' "$stage/metadata")
 [[ $version =~ ^[0-9][0-9A-Za-z.+~-]*-r[0-9]+$ ]]
 "$apk" --keys-dir "$APK_KEYS_DIR" extract --destination "$root" "$input"
 test -x "$root/usr/bin/v2raya"
 test -x "$root/usr/bin/v2raya_core"
+if [[ $arch = aarch64_cortex-a53 ]]; then
+    # Leave room on Filogic NAND for both official geodata packages.
+    for binary in "$root/usr/bin/v2raya" "$root/usr/bin/v2raya_core"; do
+        readelf -h "$binary" | grep -q 'Machine:.*AArch64'
+        upx --fast "$binary"
+        upx -t "$binary"
+    done
+fi
 mkdir "$root/CONTROL"
 cat > "$root/CONTROL/control" <<EOF
 Package: v2rayblisc
 Version: $version
-Architecture: x86_64
+Architecture: $arch
 Maintainer: wywywywycloud <100153948+wywywywycloud@users.noreply.github.com>
 Section: net
 Depends: ca-bundle, ip-full, kmod-nft-tproxy, v2ray-geoip, v2ray-geosite

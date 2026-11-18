@@ -1,15 +1,21 @@
 #!/usr/bin/env bash
-# Creates a signed OpenWrt x86_64 APK from the current checkout.
+# Creates a signed OpenWrt APK from the current checkout.
 set -euo pipefail
-: "${OPENWRT_SDK:?Point OPENWRT_SDK at the extracted 25.12.5 x86/64 SDK}"
+: "${OPENWRT_SDK:?Point OPENWRT_SDK at the extracted OpenWrt SDK containing apk-tools}"
 : "${APK_SIGN_KEY:?Point APK_SIGN_KEY at an RSA private key outside the source tree}"
 version=${1:?Supply an APK version such as 2026.11.18-r1}
 out=$(realpath -m "${2:-dist}")
 src=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$src"
 revision=$(git rev-parse --short=12 HEAD)
-test "$(uname -m)" = x86_64
-export GOOS=linux GOARCH=amd64
+arch=${OPENWRT_ARCH:-x86_64}
+name="v2rayblisc-$version.apk"
+case "$arch" in
+  x86_64) export GOARCH=amd64 ;;
+  aarch64_cortex-a53) export GOARCH=arm64 GOARM64=v8.0; name="v2rayblisc-$version-$arch.apk" ;;
+  *) echo "Unsupported OpenWrt architecture: $arch" >&2; exit 1 ;;
+esac
+export GOOS=linux
 bash ./build.sh "$version.$revision"
 stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT
@@ -35,10 +41,10 @@ cat > "$stage/remove" <<'EOF'
 /etc/init.d/v2raya disable
 EOF
 apk=$OPENWRT_SDK/staging_dir/host/bin/apk
-"$apk" mkpkg --info name:v2rayblisc --info "version:$version" --info arch:x86_64 \
+"$apk" mkpkg --info name:v2rayblisc --info "version:$version" --info "arch:$arch" \
   --info 'description:v2rayA service, web interface and matching Xray-based core' \
   --info 'license:AGPL-3.0-only AND MPL-2.0' --info 'url:https://github.com/wywywywycloud/v2rayBLISC' \
   --info 'depends:!v2raya ca-bundle ip-full kmod-nft-tproxy v2ray-geoip v2ray-geosite' \
   --files "$root" --script "post-install:$stage/installed" --script "post-upgrade:$stage/installed" \
-  --script "pre-deinstall:$stage/remove" --sign-key "$APK_SIGN_KEY" --output "$out/v2rayblisc-$version.apk"
+  --script "pre-deinstall:$stage/remove" --sign-key "$APK_SIGN_KEY" --output "$out/$name"
 
