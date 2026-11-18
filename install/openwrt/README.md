@@ -1,0 +1,69 @@
+# v2rayBLISC для OpenWrt x86/64
+
+| Поддерживаемая версия | Установка | Сборка |
+| --- | --- | --- |
+| OpenWrt 24.10.5 | `opkg`, подписанный фид, пакет `v2rayblisc` | [IPK и ключ фида](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-24.10.5-x86_64-r1) |
+| OpenWrt 25.12.5 | `apk`, подписанный пакет `v2rayblisc` | [APK и ключ пакета](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-25.12.5-x86_64-r1) |
+
+Оба пакета содержат одинаковые исполняемые файлы сервиса, веб-интерфейса и ядра. Войдите на роутер под root. Проверьте версию и архитектуру командой `ubus call system board`. Пакету и базам GeoIP/GeoSite требуется место в корневой файловой системе. Штатный пакет `v2raya` конфликтует с `v2rayblisc`.
+
+## OpenWrt 24.10.5
+
+Подключите фид владельца `wywywywycloud`. Команды проверяют ключ, добавляют его в хранилище opkg и устанавливают пакет с зависимостями из штатных репозиториев.
+
+```sh
+(
+  set -e
+  feed=https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-24.10.5-x86_64-r1
+  wget -O /tmp/v2rayblisc-opkg.pub "$feed/v2rayblisc-opkg.pub"
+  echo '6541d42634568fbc438fe0b4dc1578c02ff80d4961b10b4058f988ba452dd160  /tmp/v2rayblisc-opkg.pub' | sha256sum -c -
+  opkg-key add /tmp/v2rayblisc-opkg.pub
+  echo "src/gz v2rayblisc $feed" > /etc/opkg/v2rayblisc.conf
+  opkg update
+  opkg install v2rayblisc
+)
+```
+
+## OpenWrt 25.12.5
+
+```sh
+(
+  set -e
+  cd /tmp
+  release=https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-25.12.5-x86_64-r1
+  wget -O blisc.pem.pub "$release/blisc.pem.pub"
+  echo '5add20097e2f769ba46b97eeee65ad400feb9a3ec34eeeb630504729a519499c  blisc.pem.pub' | sha256sum -c -
+  wget -O v2rayblisc-2026.11.18-r1.apk "$release/v2rayblisc-2026.11.18-r1.apk"
+  cp blisc.pem.pub /etc/apk/keys/blisc.pem.pub
+  apk update
+  apk verify ./v2rayblisc-2026.11.18-r1.apk
+  apk add ./v2rayblisc-2026.11.18-r1.apk
+)
+```
+
+## Запуск и профиль
+
+```sh
+uci set v2raya.config.enabled=1
+uci commit v2raya
+/etc/init.d/v2raya enable
+/etc/init.d/v2raya start
+```
+
+Откройте порт 2017 на LAN-адресе роутера, создайте учётную запись и импортируйте свою подписку. Сохранённые параметры TPROXY, RoutingA «Россия», автонаполнения группы, `leastping` и HTTP-проб доступны в [проверенном профиле](https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-25.12.5-x86_64-r1/profile.json). При переносе подставьте DNS своего WAN вместо адреса QEMU `10.0.2.3`. [Инструкция по применению профиля](https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-25.12.5-x86_64-r1/OpenWrt-25.12.5.txt)
+
+## Сборка фида opkg
+
+Чтобы выпустить тот же набор файлов для 24.10.5, сначала соберите подписанный пакет скриптом `package.sh` из этого каталога или возьмите опубликованный APK. В Linux используйте `apk` из SDK 25.12.5 и официальный ImageBuilder 24.10.5 для x86/64. Запустите упаковку под root или через fakeroot, чтобы владельцем файлов в архиве был root.
+
+```sh
+export IMAGEBUILDER=/path/to/openwrt-imagebuilder-24.10.5-x86-64.Linux-x86_64
+export APK=/path/to/sdk-25.12.5/staging_dir/host/bin/apk
+export APK_KEYS_DIR=/path/to/trusted-apk-public-keys
+export USIGN_KEY=/private/path/to/opkg-key
+# Для нового фида создать ключ один раз и сохранить для следующих публикаций.
+(umask 077 && test ! -e "$USIGN_KEY" && test ! -e "$USIGN_KEY.pub" && "$IMAGEBUILDER/staging_dir/host/bin/usign" -G -s "$USIGN_KEY" -p "$USIGN_KEY.pub")
+bash install/openwrt/opkg-feed.sh /path/to/v2rayblisc-2026.11.18-r1.apk ./feed
+```
+
+В каталог публикации попадут IPK, индекс opkg, подпись и публичный ключ фида.
