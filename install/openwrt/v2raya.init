@@ -39,6 +39,10 @@ start_service() {
 	procd_open_instance "$CONF"
 	procd_set_param command "$PROG"
 	procd_set_param env XDG_DATA_HOME="/usr/share"
+	# Config validation can run another core alongside the active one.
+	if [ "$(uname -m)" = aarch64 ] && awk '$1 == "MemTotal:" { small = $2 <= 262144 } END { exit !small }' /proc/meminfo; then
+		procd_append_param env GOMEMLIMIT=28MiB GOGC=30
+	fi
 
 	append_env "config" "/etc/v2raya"
 	append_env "log_file" "/var/log/v2raya/v2raya.log"
