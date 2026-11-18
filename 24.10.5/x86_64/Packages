@@ -1,0 +1,15 @@
+Package: v2rayblisc
+Version: 2026.11.18-r1
+Architecture: x86_64
+Maintainer: wywywywycloud <100153948+wywywywycloud@users.noreply.github.com>
+Section: net
+Depends: ca-bundle, ip-full, kmod-nft-tproxy, v2ray-geoip, v2ray-geosite
+Conflicts: v2raya
+License: AGPL-3.0-only AND MPL-2.0
+Source: https://github.com/wywywywycloud/v2rayBLISC
+Installed-Size: 65873920
+Filename: v2rayblisc_2026.11.18-r1_x86_64.ipk
+Size: 25205455
+SHA256sum: 52ad5eb1ba285d28a086a0166cbf6ac68b3b27883c8a83680685982e8cfa373e
+Description: v2rayA service, web interface and matching Xray-based core
+
