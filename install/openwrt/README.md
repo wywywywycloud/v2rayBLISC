@@ -14,13 +14,26 @@
 ```sh
 (
   set -e
-  feed=https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-24.10.5-x86_64-r1
+  feed=https://raw.githubusercontent.com/wywywywycloud/v2rayBLISC/opkg-feed/24.10.5/x86_64
   wget -O /tmp/v2rayblisc-opkg.pub "$feed/v2rayblisc-opkg.pub"
   echo '6541d42634568fbc438fe0b4dc1578c02ff80d4961b10b4058f988ba452dd160  /tmp/v2rayblisc-opkg.pub' | sha256sum -c -
   opkg-key add /tmp/v2rayblisc-opkg.pub
   echo "src/gz v2rayblisc $feed" > /etc/opkg/v2rayblisc.conf
   opkg update
   opkg install v2rayblisc
+)
+```
+
+Если требуется принудительно переустановить этот же выпуск на работающем прокси, сначала скачайте IPK. Команда переустановки может остановить сервис до окончания сетевой загрузки.
+
+```sh
+(
+  set -e
+  cd /tmp
+  opkg download v2rayblisc
+  pkg=v2rayblisc_2026.11.18-r1_x86_64.ipk
+  echo "52ad5eb1ba285d28a086a0166cbf6ac68b3b27883c8a83680685982e8cfa373e  $pkg" | sha256sum -c -
+  opkg --force-reinstall install "./$pkg"
 )
 ```
 
@@ -31,11 +44,12 @@
   set -e
   cd /tmp
   release=https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-25.12.5-x86_64-r1
-  wget -O blisc.pem.pub "$release/blisc.pem.pub"
-  echo '5add20097e2f769ba46b97eeee65ad400feb9a3ec34eeeb630504729a519499c  blisc.pem.pub' | sha256sum -c -
-  wget -O v2rayblisc-2026.11.18-r1.apk "$release/v2rayblisc-2026.11.18-r1.apk"
-  cp blisc.pem.pub /etc/apk/keys/blisc.pem.pub
   apk update
+  apk add curl
+  curl -fL --retry 2 -o blisc.pem.pub "$release/blisc.pem.pub"
+  echo '5add20097e2f769ba46b97eeee65ad400feb9a3ec34eeeb630504729a519499c  blisc.pem.pub' | sha256sum -c -
+  curl -fL --retry 2 -o v2rayblisc-2026.11.18-r1.apk "$release/v2rayblisc-2026.11.18-r1.apk"
+  cp blisc.pem.pub /etc/apk/keys/blisc.pem.pub
   apk verify ./v2rayblisc-2026.11.18-r1.apk
   apk add ./v2rayblisc-2026.11.18-r1.apk
 )
