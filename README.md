@@ -177,7 +177,7 @@ A service started with `sudo` is stopped with `sudo brew services stop v2raya`, 
 <details>
 <summary><strong>OpenWrt</strong></summary>
 
-The v2rayBLISC packages support **OpenWrt 24.10.5 x86/64** through a signed opkg feed and **OpenWrt 25.12.5 x86/64** through a signed APK. Both include the matching service, web interface and core. [Install v2rayBLISC on OpenWrt](install/openwrt/README.md)
+The v2rayBLISC packages support **OpenWrt 24.10.5 x86/64** through a signed opkg feed and **OpenWrt 25.12.5 x86/64** through a signed APK. Both include the matching service, web interface and core. For OpenWrt 24.10.5, a Cortex-A53 IPK is also available for the Cudy WR3000S v1 (`mediatek/filogic`). [Install v2rayBLISC on OpenWrt](install/openwrt/README.md)
 
 The [v2raya-openwrt](https://github.com/v2rayA/v2raya-openwrt) feed and the official packages feed currently package 2.2.7.x with a separate `xray-core`, not the release described here. For other architectures, see the manual installation of the `mips32`, `mips32le`, `arm64` or `x64` release binaries in the next section and supply your own init script.
 
