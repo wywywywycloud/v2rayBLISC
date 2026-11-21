@@ -15,7 +15,7 @@ func SnapshotCatalog() (func() error, error) {
 	tables := []table{
 		{name: "subscriptions", where: "1"},
 		{name: "servers", where: "1"},
-		{name: "system_config", where: "key LIKE 'outbound.%:connectedServers'"},
+		{name: "system_config", where: "key LIKE 'outbound.%:connectedServers' OR key = 'system:routingASource'"},
 	}
 	err := ReadModifyWrite(func(tx *sql.Tx) error {
 		for i := range tables {

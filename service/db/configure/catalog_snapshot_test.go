@@ -33,11 +33,17 @@ func TestCatalogSnapshotRestoresDeletionAndRenumbering(t *testing.T) {
 		t.Fatal(err)
 	}
 	servers, subscriptions := GetServers(), GetSubscriptions()
+	previous := GetRoutingASource()
+	t.Cleanup(func() { _ = SetRoutingASource(previous) })
+	source := RoutingASource{SubscriptionID: GetSubscription(subIndex).DatabaseID, IntervalHours: 24}
+	if err := SetRoutingASource(source); err != nil {
+		t.Fatal(err)
+	}
 	restore, err := db.SnapshotCatalog()
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := RemoveNodes([]int{subIndex}, []int{serverIndex}, NewNodeRefs(nil)); err != nil {
+	if err := RemoveNodes([]int{subIndex}, []int{serverIndex}, NewNodeRefs(nil), 0); err != nil {
 		t.Fatal(err)
 	}
 	if err := db.Set("system", "snapshot-test", "keep"); err != nil {
@@ -47,7 +53,7 @@ func TestCatalogSnapshotRestoresDeletionAndRenumbering(t *testing.T) {
 	if err := restore(); err != nil {
 		t.Fatal(err)
 	}
-	if !reflect.DeepEqual(servers, GetServers()) || !reflect.DeepEqual(subscriptions, GetSubscriptions()) ||
+	if source != GetRoutingASource() || !reflect.DeepEqual(servers, GetServers()) || !reflect.DeepEqual(subscriptions, GetSubscriptions()) ||
 		!reflect.DeepEqual(refs, GetConnectedServersByOutbound(group)) {
 		t.Fatal("catalog IDs, ordering or references changed after restore")
 	}
