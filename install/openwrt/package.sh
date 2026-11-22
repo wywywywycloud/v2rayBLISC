@@ -12,7 +12,9 @@ arch=${OPENWRT_ARCH:-x86_64}
 name="v2rayblisc-$version.apk"
 case "$arch" in
   x86_64) export GOARCH=amd64 ;;
-  aarch64_cortex-a53) export GOARCH=arm64 GOARM64=v8.0; name="v2rayblisc-$version-$arch.apk" ;;
+  aarch64_generic|aarch64_cortex-a53|aarch64_cortex-a72|aarch64_cortex-a76)
+    export GOARCH=arm64 GOARM64=v8.0
+    name="v2rayblisc-$version-$arch.apk" ;;
   *) echo "Unsupported OpenWrt architecture: $arch" >&2; exit 1 ;;
 esac
 export GOOS=linux

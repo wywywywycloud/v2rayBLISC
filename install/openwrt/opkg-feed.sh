@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Package the signed release payload for OpenWrt 24.10.5.
+# Package the signed release payload for the OpenWrt 24.10 opkg feed.
 set -euo pipefail
 umask 022
 : "${IMAGEBUILDER:?Set IMAGEBUILDER to the extracted OpenWrt 24.10.5 ImageBuilder for the target}"
@@ -20,7 +20,7 @@ install -d -m755 "$root" "$feed"
 grep -qx '  name: v2rayblisc' "$stage/metadata"
 arch=$(sed -n 's/^  arch: //p' "$stage/metadata")
 case "$arch" in
-  x86_64|aarch64_cortex-a53) ;;
+  x86_64|aarch64_generic|aarch64_cortex-a53|aarch64_cortex-a72|aarch64_cortex-a76) ;;
   *) echo "Unsupported OpenWrt architecture: $arch" >&2; exit 1 ;;
 esac
 version=$(sed -n 's/^  version: //p' "$stage/metadata")
@@ -28,7 +28,7 @@ version=$(sed -n 's/^  version: //p' "$stage/metadata")
 "$apk" --keys-dir "$APK_KEYS_DIR" extract --destination "$root" "$input"
 test -x "$root/usr/bin/v2raya"
 test -x "$root/usr/bin/v2raya_core"
-if [[ $arch = aarch64_cortex-a53 ]]; then
+if [[ $arch = aarch64_* ]]; then
     # Leave room on Filogic NAND for both official geodata packages.
     for binary in "$root/usr/bin/v2raya" "$root/usr/bin/v2raya_core"; do
         readelf -h "$binary" | grep -q 'Machine:.*AArch64'

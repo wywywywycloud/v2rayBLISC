@@ -3,14 +3,24 @@
 | Поддерживаемая версия | Установка | Сборка |
 | --- | --- | --- |
 | OpenWrt 24.10.5 x86/64 | `opkg`, подписанный фид, пакет `v2rayblisc` | [IPK и ключ фида](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-24.10.5-x86_64-r1) |
-| OpenWrt 24.10.5 aarch64_cortex-a53 (Cudy WR3000S v1) | `opkg`, подписанный ARM-фид | [IPK и ключ фида](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-24.10.5-cortex-a53-r2) |
+| OpenWrt 24.10.x ARMv8, 64-битная прошивка | `opkg`, подписанные фиды для `aarch64_generic`, `aarch64_cortex-a53`, `aarch64_cortex-a72`, `aarch64_cortex-a76` | [IPK и установщик ARMv8 r2](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-24.10-armv8-r2) |
 | OpenWrt 25.12.5 x86/64 | `apk`, подписанный пакет `v2rayblisc` | [APK и ключ пакета](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-25.12.5-x86_64-r1) |
 
 Каждый пакет содержит сервис, веб-интерфейс и соответствующее ядро для указанной архитектуры. Войдите на роутер под root. Проверьте версию и архитектуру командой `ubus call system board`. Пакету и базам GeoIP/GeoSite требуется место в корневой файловой системе. Штатный пакет `v2raya` конфликтует с `v2rayblisc`.
 
+## OpenWrt 24.10.x на ARMv8
+
+Выполните в SSH-сессии на роутере под root. Если процессор отображается как **ARMv8 Processor rev 4**, установщик определит вариант пакета по архитектурам, которые принимает `opkg`. Он подключит подписанный фид своей архитектуры и установит `v2rayblisc`. Зависимости, в том числе модуль TPROXY, берутся из репозиториев самой прошивки.
+
+```sh
+wget -O /tmp/install-armv8.sh https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-24.10-armv8-r2/install-armv8.sh && sh /tmp/install-armv8.sh
+```
+
+После первой установки выполните команды из раздела «Запуск и профиль». Во всех четырёх IPK содержимое `data.tar.gz` взято из ARMv8.0-сборки `2026.11.18-r2.6910b5dbd31b`. Основание поддержки серии 24.10.x — испытания на OpenWrt 24.10.5 Cortex-A53. [Фиды ARMv8](https://github.com/wywywywycloud/v2rayBLISC/tree/opkg-feed/24.10) · [Протокол испытаний](https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-24.10.5-cortex-a53-r2/OpenWrt-24.10.5-Cortex-A53.txt)
+
 ## OpenWrt 24.10.5
 
-Подключите фид владельца `wywywywycloud`. Команды проверяют ключ, добавляют его в хранилище opkg и устанавливают пакет с зависимостями из штатных репозиториев.
+Для ARMv8 используйте установщик выше. Ниже приведены команды для исходных фидов 24.10.5 x86/64 и Cudy Cortex-A53.
 
 ```sh
 (
