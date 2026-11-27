@@ -1,0 +1,4 @@
+Based on OpenWrt LuCI luci-app-v2raya by ImmortalWrt and OpenWrt contributors.
+Copyright (C) 2024 ImmortalWrt.org. Licensed under Apache-2.0.
+https://github.com/openwrt/luci/tree/aa4865e8e6472d6ba68e541688065fc2235bbd83/applications/luci-app-v2raya
+The v2rayBLISC package uses its own LuCI routes, menu title and ACL name.

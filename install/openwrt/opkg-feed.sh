@@ -6,6 +6,7 @@ umask 022
 : "${APK_KEYS_DIR:?Set APK_KEYS_DIR to a directory containing the release APK public key}"
 : "${USIGN_KEY:?Set USIGN_KEY to the feed signing key (public key in USIGN_KEY.pub)}"
 input=$(realpath "${1:?Supply the signed v2rayblisc APK}")
+here=$(cd "$(dirname "$0")" && pwd)
 out=$(realpath -m "${2:-dist}")
 builder=$(realpath "$IMAGEBUILDER")
 key=$(realpath "$USIGN_KEY")
@@ -43,7 +44,7 @@ Version: $version
 Architecture: $arch
 Maintainer: wywywywycloud <100153948+wywywywycloud@users.noreply.github.com>
 Section: net
-Depends: ca-bundle, ip-full, kmod-nft-tproxy, v2ray-geoip, v2ray-geosite
+Depends: ca-bundle, ip-full, kmod-nft-tproxy, v2ray-geoip, v2ray-geosite, luci-app-v2rayblisc
 Conflicts: v2raya
 License: AGPL-3.0-only AND MPL-2.0
 Source: https://github.com/wywywywycloud/v2rayBLISC
@@ -56,6 +57,12 @@ for hook in postinst prerm; do
     chmod 755 "$root/CONTROL/$hook"
 done
 "$builder/scripts/ipkg-build" "$root" "$feed"
+luci=$stage/luci-app-v2rayblisc
+cp -R "$here/luci-app-v2rayblisc" "$luci"
+echo "Version: $version" >> "$luci/CONTROL/control"
+chmod 755 "$luci/CONTROL/postinst"
+cp -p "$luci/CONTROL/postinst" "$luci/CONTROL/postrm"
+"$builder/scripts/ipkg-build" "$luci" "$feed"
 cd "$feed"
 MKHASH="$builder/staging_dir/host/bin/mkhash" "$builder/scripts/ipkg-make-index.sh" . > Packages
 gzip -n -c Packages > Packages.gz

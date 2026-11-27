@@ -1,0 +1,9 @@
+Package: luci-app-v2rayblisc
+Architecture: all
+Maintainer: wywywywycloud <100153948+wywywywycloud@users.noreply.github.com>
+Section: luci
+Depends: luci-base
+License: Apache-2.0
+Source: https://github.com/wywywywycloud/v2rayBLISC
+Installed-Size: 0
+Description: LuCI settings, status and log for v2rayBLISC

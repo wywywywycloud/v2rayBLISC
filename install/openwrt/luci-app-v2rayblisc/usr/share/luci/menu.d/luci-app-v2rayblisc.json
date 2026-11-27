@@ -1,0 +1,28 @@
+{
+	"admin/services/v2rayblisc": {
+		"title": "v2rayBLISC",
+		"action": {
+			"type": "firstchild"
+		},
+		"depends": {
+			"acl": [ "luci-app-v2rayblisc" ],
+			"uci": { "v2raya": true }
+		}
+	},
+	"admin/services/v2rayblisc/config": {
+		"title": "Configuration",
+		"order": 10,
+		"action": {
+			"type": "view",
+			"path": "v2rayblisc/config"
+		}
+	},
+	"admin/services/v2rayblisc/log": {
+		"title": "Log",
+		"order": 20,
+		"action": {
+			"type": "view",
+			"path": "v2rayblisc/log"
+		}
+	}
+}
