@@ -6,7 +6,8 @@ case "$DISTRIB_RELEASE" in
   25.12.*) ;;
   *) echo "Требуется OpenWrt 25.12.x. Установлена версия $DISTRIB_RELEASE." >&2; exit 1 ;;
 esac
-arch=$(apk --print-arch)
+# apk --print-arch reports "aarch64" even on target-specific OpenWrt builds.
+arch=$DISTRIB_ARCH
 case "$arch" in
   x86_64|aarch64_generic|aarch64_cortex-a53|aarch64_cortex-a72|aarch64_cortex-a76) ;;
   *) echo "В фиде нет сборки для $arch." >&2; exit 1 ;;
@@ -20,4 +21,5 @@ mkdir -p /etc/apk/keys /etc/apk/repositories.d
 cp "$key" /etc/apk/keys/blisc.pem.pub
 printf '%s\n' "$feed/$arch/packages.adb" > /etc/apk/repositories.d/v2rayblisc.list
 apk update
-apk add --upgrade v2rayblisc
+apk add v2rayblisc
+apk upgrade v2rayblisc

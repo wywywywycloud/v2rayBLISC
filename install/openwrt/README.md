@@ -4,7 +4,7 @@
 | --- | --- | --- |
 | OpenWrt 24.10.5 x86/64 | `opkg`, подписанный фид, пакет `v2rayblisc` | [IPK и ключ фида](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-24.10.5-x86_64-r1) |
 | OpenWrt 24.10.x ARMv8, 64-битная прошивка | `opkg`, подписанные фиды для `aarch64_generic`, `aarch64_cortex-a53`, `aarch64_cortex-a72`, `aarch64_cortex-a76` | [IPK и установщик 2026.11.27-r2](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-24.10-armv8-2026.11.27-r2) |
-| OpenWrt 25.12.5 x86/64 | `apk`, подписанный пакет `v2rayblisc` | [APK и ключ пакета](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-25.12.5-x86_64-r1) |
+| OpenWrt 25.12.x, x86/64 и ARMv8 | `apk`, подписанные фиды для `x86_64`, `aarch64_generic`, `aarch64_cortex-a53`, `aarch64_cortex-a72`, `aarch64_cortex-a76` | [Репозитории APK](https://github.com/wywywywycloud/v2rayBLISC/tree/opkg-feed/25.12) |
 
 Каждый пакет содержит сервис, веб-интерфейс и соответствующее ядро для указанной архитектуры. Войдите на роутер под root. Проверьте версию и архитектуру командой `ubus call system board`. Пакету и базам GeoIP/GeoSite требуется место в корневой файловой системе. Штатный пакет `v2raya` конфликтует с `v2rayblisc`.
 
@@ -61,23 +61,17 @@ wget -O /tmp/install-armv8.sh https://github.com/wywywywycloud/v2rayBLISC/releas
 )
 ```
 
-## OpenWrt 25.12.5
+## OpenWrt 25.12.x
+
+В SSH-сессии на роутере выполните команду ниже. Установщик берёт архитектуру пакетов из `DISTRIB_ARCH` в `/etc/openwrt_release`, проверяет SHA-256 публичного ключа, записывает адрес фида в `/etc/apk/repositories.d/v2rayblisc.list` и устанавливает `v2rayblisc` вместе с `luci-app-v2rayblisc`. Модуль ядра TPROXY берётся из штатного фида работающей прошивки.
 
 ```sh
-(
-  set -e
-  cd /tmp
-  release=https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-25.12.5-x86_64-r1
-  apk update
-  apk add curl
-  curl -fL --retry 2 -o blisc.pem.pub "$release/blisc.pem.pub"
-  echo '5add20097e2f769ba46b97eeee65ad400feb9a3ec34eeeb630504729a519499c  blisc.pem.pub' | sha256sum -c -
-  curl -fL --retry 2 -o v2rayblisc-2026.11.18-r1.apk "$release/v2rayblisc-2026.11.18-r1.apk"
-  cp blisc.pem.pub /etc/apk/keys/blisc.pem.pub
-  apk verify ./v2rayblisc-2026.11.18-r1.apk
-  apk add ./v2rayblisc-2026.11.18-r1.apk
-)
+wget -O /tmp/install-apk.sh https://raw.githubusercontent.com/wywywywycloud/v2rayBLISC/openwrt-25.12-apk-2026.11.27-r3/install/openwrt/install-apk.sh && sh /tmp/install-apk.sh
 ```
+
+После первой установки включите службу, как описано ниже. В LuCI откройте **Сервисы → v2rayBLISC**. Для последующих обновлений выполните `apk update && apk upgrade v2rayblisc`.
+
+Для сборки этих фидов с настроенными `OPENWRT_SDK` и `APK_SIGN_KEY` выполните `OPENWRT_ARCH=x86_64 bash install/openwrt/package.sh VERSION dist/25.12 --feed`, затем повторите с `OPENWRT_ARCH=aarch64_generic`. Вторая команда собирает четыре фида с бинарниками ARMv8.0, для сжатия которых нужен UPX. В каждой папке архитектуры публикуются подписанный `packages.adb` и оба APK.
 
 ## Запуск и профиль
 
