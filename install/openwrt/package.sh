@@ -81,7 +81,7 @@ for target in "${targets[@]}"; do
   --files "$root" --script "post-install:$stage/installed" --script "post-upgrade:$stage/installed" \
   --script "pre-deinstall:$stage/remove" --sign-key "$APK_SIGN_KEY" --output "$dest/$name"
   if [[ $mode == --feed ]]; then
-    "$apk" mkndx --sign-key "$APK_SIGN_KEY" --output "$dest/packages.adb" "$dest/$name" "$dest/$luci_pkg"
+    "$apk" --keys-dir "$out" mkndx --sign-key "$APK_SIGN_KEY" --output "$dest/packages.adb" "$dest/$name" "$dest/$luci_pkg"
   fi
 done
 
