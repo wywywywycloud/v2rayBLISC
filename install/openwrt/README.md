@@ -3,7 +3,7 @@
 | Поддерживаемая версия | Установка | Сборка |
 | --- | --- | --- |
 | OpenWrt 24.10.5 x86/64 | `opkg`, подписанный фид, пакет `v2rayblisc` | [IPK и ключ фида](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-24.10.5-x86_64-r1) |
-| OpenWrt 24.10.x ARMv8, 64-битная прошивка | `opkg`, подписанные фиды для `aarch64_generic`, `aarch64_cortex-a53`, `aarch64_cortex-a72`, `aarch64_cortex-a76` | [IPK и установщик ARMv8 r2](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-24.10-armv8-r2) |
+| OpenWrt 24.10.x ARMv8, 64-битная прошивка | `opkg`, подписанные фиды для `aarch64_generic`, `aarch64_cortex-a53`, `aarch64_cortex-a72`, `aarch64_cortex-a76` | [IPK и установщик 2026.11.27-r1](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-24.10-armv8-2026.11.27-r1) |
 | OpenWrt 25.12.5 x86/64 | `apk`, подписанный пакет `v2rayblisc` | [APK и ключ пакета](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-25.12.5-x86_64-r1) |
 
 Каждый пакет содержит сервис, веб-интерфейс и соответствующее ядро для указанной архитектуры. Войдите на роутер под root. Проверьте версию и архитектуру командой `ubus call system board`. Пакету и базам GeoIP/GeoSite требуется место в корневой файловой системе. Штатный пакет `v2raya` конфликтует с `v2rayblisc`.
@@ -13,10 +13,10 @@
 Выполните в SSH-сессии на роутере под root. Если процессор отображается как **ARMv8 Processor rev 4**, установщик определит вариант пакета по архитектурам, которые принимает `opkg`. Он подключит подписанный фид своей архитектуры и установит `v2rayblisc`. Зависимости, в том числе модуль TPROXY, берутся из репозиториев самой прошивки.
 
 ```sh
-wget -O /tmp/install-armv8.sh https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-24.10-armv8-r2/install-armv8.sh && sh /tmp/install-armv8.sh
+wget -O /tmp/install-armv8.sh https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-24.10-armv8-2026.11.27-r1/install-armv8.sh && sh /tmp/install-armv8.sh
 ```
 
-После первой установки выполните команды из раздела «Запуск и профиль». Во всех четырёх IPK содержимое `data.tar.gz` взято из ARMv8.0-сборки `2026.11.18-r2.6910b5dbd31b`. Основание поддержки серии 24.10.x — испытания на OpenWrt 24.10.5 Cortex-A53. [Фиды ARMv8](https://github.com/wywywywycloud/v2rayBLISC/tree/opkg-feed/24.10) · [Протокол испытаний](https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-24.10.5-cortex-a53-r2/OpenWrt-24.10.5-Cortex-A53.txt)
+После первой установки выполните команды из раздела «Запуск и профиль». Если фид уже подключён, для обновления введите `opkg update && opkg upgrade v2rayblisc`. Во всех четырёх IPK используются одинаковые бинарники ARMv8.0 версии `2026.11.27-r1.1d0033739e79`. [Фиды ARMv8](https://github.com/wywywywycloud/v2rayBLISC/tree/opkg-feed/24.10)
 
 ## OpenWrt 24.10.5
 
@@ -40,7 +40,7 @@ wget -O /tmp/install-armv8.sh https://github.com/wywywywycloud/v2rayBLISC/releas
 )
 ```
 
-Для Cudy WR3000S v1 установку проверили штатным opkg в файловой системе официальной прошивки 24.10.5. На тестовом томе с 77,9 МиБ свободного места после установки пакета и всех недостающих зависимостей осталось 27,4 МиБ. Фактический расход на роутере зависит от состава прошивки и сжатия UBIFS. Для ARM64 с ОЗУ до 256 МиБ используйте r2. Служба procd задаёт предел памяти Go и частоту сборки мусора, чтобы применение правил и HTTP-пробы укладывались в доступную память.
+Для Cudy WR3000S v1 установку проверили штатным opkg в файловой системе официальной прошивки 24.10.5. При испытаниях версии 2026.11.18-r2 на тестовом томе с 77,9 МиБ свободного места после установки пакета и всех недостающих зависимостей осталось 27,4 МиБ. Фактический расход на роутере зависит от состава прошивки и сжатия UBIFS. Начиная с 2026.11.18-r2 на ARM64 с ОЗУ до 256 МиБ procd задаёт предел памяти Go и частоту сборки мусора.
 
 Если требуется принудительно переустановить этот же выпуск на работающем прокси, сначала скачайте IPK. Команда переустановки может остановить сервис до окончания сетевой загрузки.
 
@@ -51,11 +51,11 @@ wget -O /tmp/install-armv8.sh https://github.com/wywywywycloud/v2rayBLISC/releas
   opkg download v2rayblisc
   . /etc/openwrt_release
   case "$DISTRIB_ARCH" in
-    x86_64) revision=1; sum=52ad5eb1ba285d28a086a0166cbf6ac68b3b27883c8a83680685982e8cfa373e ;;
-    aarch64_cortex-a53) revision=2; sum=0c7a516ff749310fda70dc8823cfb521dbff7b16dd7cecf25ace2339f632d783 ;;
+    x86_64) version=2026.11.18-r1; sum=52ad5eb1ba285d28a086a0166cbf6ac68b3b27883c8a83680685982e8cfa373e ;;
+    aarch64_cortex-a53) version=2026.11.27-r1; sum=64e6366304ff54f5e82f4a6e4c05f5c4ff6edc341767b8c5f3c8a90d37c346d7 ;;
     *) exit 1 ;;
   esac
-  pkg=v2rayblisc_2026.11.18-r${revision}_${DISTRIB_ARCH}.ipk
+  pkg=v2rayblisc_${version}_${DISTRIB_ARCH}.ipk
   echo "$sum  $pkg" | sha256sum -c -
   opkg --force-reinstall install "./$pkg"
 )
