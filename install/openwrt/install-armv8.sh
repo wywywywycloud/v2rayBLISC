@@ -1,14 +1,14 @@
 #!/bin/sh
-# Install the signed ARMv8 feed on OpenWrt 24.10.x.
+# Install the signed ARM64 or x86_64 opkg feed on OpenWrt 24.10.
 set -eu
 . /etc/openwrt_release
 case "$DISTRIB_RELEASE" in
-    24.10.*) ;;
+    24.10|24.10.*) ;;
     *) echo "Требуется OpenWrt 24.10.x, обнаружена версия $DISTRIB_RELEASE." >&2; exit 1 ;;
 esac
 
 arch=$(opkg print-architecture | awk '
-    $1 == "arch" && $2 ~ /^aarch64_(generic|cortex-a53|cortex-a72|cortex-a76)$/ && $3+0 > priority {
+    $1 == "arch" && $2 ~ /^(x86_64|aarch64_(generic|cortex-a53|cortex-a72|cortex-a76))$/ && $3+0 > priority {
         arch=$2; priority=$3+0
     }
     END {print arch}')
@@ -26,4 +26,4 @@ echo "6541d42634568fbc438fe0b4dc1578c02ff80d4961b10b4058f988ba452dd160  $key" | 
 opkg-key add "$key"
 echo "src/gz v2rayblisc $feed" > /etc/opkg/v2rayblisc.conf
 opkg update
-opkg install v2rayblisc
+opkg install v2rayblisc luci-app-v2rayblisc

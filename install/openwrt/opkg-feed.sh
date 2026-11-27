@@ -33,8 +33,11 @@ if [[ $arch = aarch64_* ]]; then
     # Leave room on Filogic NAND for both official geodata packages.
     for binary in "$root/usr/bin/v2raya" "$root/usr/bin/v2raya_core"; do
         readelf -h "$binary" | grep -q 'Machine:.*AArch64'
-        upx --fast "$binary"
-        upx -t "$binary"
+        # The 25.12 feed already contains packed ARM64 binaries.
+        if ! upx -t "$binary" >/dev/null 2>&1; then
+            upx --fast "$binary"
+            upx -t "$binary"
+        fi
     done
 fi
 mkdir "$root/CONTROL"
