@@ -6,14 +6,14 @@ Depends: luci-base
 License: Apache-2.0
 Source: https://github.com/wywywywycloud/v2rayBLISC
 Installed-Size: 30720
-Filename: luci-app-v2rayblisc_2026.11.27-r2_all.ipk
-Size: 7319
-SHA256sum: 17e8ceafa476444899a2b3f6c8b3f78c215ea506d418a833d4d77b4fd1fc2cf3
+Filename: luci-app-v2rayblisc_2026.11.27-r3_all.ipk
+Size: 7316
+SHA256sum: 1277621d36dea3a2156578997ca45bc636fc40e3346bb30485eb13c42a39207f
 Description: LuCI settings, status and log for v2rayBLISC
-Version: 2026.11.27-r2
+Version: 2026.11.27-r3
 
 Package: v2rayblisc
-Version: 2026.11.27-r2
+Version: 2026.11.27-r3
 Architecture: aarch64_cortex-a76
 Maintainer: wywywywycloud <100153948+wywywywycloud@users.noreply.github.com>
 Section: net
@@ -22,8 +22,8 @@ Conflicts: v2raya
 License: AGPL-3.0-only AND MPL-2.0
 Source: https://github.com/wywywywycloud/v2rayBLISC
 Installed-Size: 26101760
-Filename: v2rayblisc_2026.11.27-r2_aarch64_cortex-a76.ipk
-Size: 25121880
-SHA256sum: a18cdcd6a5d9dc439b0cb056227bce762cb713ce60caedc6b0f4eb25668ccba0
+Filename: v2rayblisc_2026.11.27-r3_aarch64_cortex-a76.ipk
+Size: 25120703
+SHA256sum: 9b2edbc1f7a1302947ac233b9cda7db0a946bb5f3e63e8b3153f7d79c52d34b7
 Description: v2rayA service, web interface and matching Xray-based core
 
