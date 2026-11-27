@@ -52,13 +52,24 @@ func DeleteConnection(ctx *gin.Context) {
 	getTouch(ctx)
 }
 
-func PostV2ray(ctx *gin.Context) {
+func beginCoreControl(ctx *gin.Context) (func(), bool) {
 	finish, ok := interruptHTTPTests(ctx.Request.Context())
 	if !ok {
-		return
+		return nil, false
 	}
-	defer finish()
 	release, ok := beginMutation(ctx)
+	if !ok {
+		finish()
+		return nil, false
+	}
+	return func() {
+		release()
+		finish()
+	}, true
+}
+
+func PostV2ray(ctx *gin.Context) {
+	release, ok := beginCoreControl(ctx)
 	if !ok {
 		return
 	}
@@ -73,12 +84,7 @@ func PostV2ray(ctx *gin.Context) {
 }
 
 func DeleteV2ray(ctx *gin.Context) {
-	finish, ok := interruptHTTPTests(ctx.Request.Context())
-	if !ok {
-		return
-	}
-	defer finish()
-	release, ok := beginMutation(ctx)
+	release, ok := beginCoreControl(ctx)
 	if !ok {
 		return
 	}

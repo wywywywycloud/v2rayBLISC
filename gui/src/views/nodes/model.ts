@@ -1,7 +1,11 @@
 // Shared node state and backend operations for the dashboard and proxies page.
 import { computed, getCurrentScope, onScopeDispose, ref, watch } from "vue";
 import dayjs from "dayjs";
-import { getNodeLatency, getTouch, putOutboundConnections } from "@/api";
+import {
+  getNodeLatency,
+  getTouch,
+  putOutboundConnections,
+} from "@/api";
 import type {
   Touch,
   TouchResponse,
@@ -93,13 +97,8 @@ export function useNodes() {
   const ready = ref(false);
   // a response that lands after the page is gone must not overwrite what the
   // next page has since written to the store
-  let disposed = false;
   const probes = new AbortController();
-  if (getCurrentScope())
-    onScopeDispose(() => {
-      disposed = true;
-      probes.abort();
-    });
+  if (getCurrentScope()) onScopeDispose(() => probes.abort());
 
   const connected = computed<Which[]>(() => touch.value.connectedServer ?? []);
   /** the groups each node is a member of, by whichKey: a long list asks for every row */
@@ -120,7 +119,7 @@ export function useNodes() {
       .filter((x): x is { which: Which; row: Row } => x.row !== null),
   );
   function apply(res: TouchResponse) {
-    if (disposed) return;
+    if (probes.signal.aborted) return;
     const next = res.touch;
     next.subscriptions.forEach((s, i) => {
       s.status = dayjs(s.status)
@@ -195,7 +194,10 @@ export function useNodes() {
     }
   }
 
-  async function testAll(rows: Row[], testingText: string): Promise<void> {
+  async function testAll(
+    rows: Row[],
+    testingText: string,
+  ): Promise<void> {
     const whiches = rows.map(
       (r) => ({ ...whichOf(r), sub: r.sub ?? null }) as Which,
     );
@@ -203,7 +205,7 @@ export function useNodes() {
     rows.forEach((r) => (r.pingLatency = testingText));
     try {
       const res = await getNodeLatency(whiches, probes.signal);
-      if (disposed) return;
+      if (probes.signal.aborted) return;
       for (const w of res.whiches) {
         const row = locate(touch.value, w);
         if (row) row.pingLatency = w.pingLatency ?? "";
