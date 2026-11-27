@@ -3,20 +3,20 @@
 | Поддерживаемая версия | Установка | Сборка |
 | --- | --- | --- |
 | OpenWrt 24.10.5 x86/64 | `opkg`, подписанный фид, пакет `v2rayblisc` | [IPK и ключ фида](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-24.10.5-x86_64-r1) |
-| OpenWrt 24.10.x ARMv8, 64-битная прошивка | `opkg`, подписанные фиды для `aarch64_generic`, `aarch64_cortex-a53`, `aarch64_cortex-a72`, `aarch64_cortex-a76` | [IPK и установщик 2026.11.27-r1](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-24.10-armv8-2026.11.27-r1) |
+| OpenWrt 24.10.x ARMv8, 64-битная прошивка | `opkg`, подписанные фиды для `aarch64_generic`, `aarch64_cortex-a53`, `aarch64_cortex-a72`, `aarch64_cortex-a76` | [IPK и установщик 2026.11.27-r2](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-24.10-armv8-2026.11.27-r2) |
 | OpenWrt 25.12.5 x86/64 | `apk`, подписанный пакет `v2rayblisc` | [APK и ключ пакета](https://github.com/wywywywycloud/v2rayBLISC/releases/tag/openwrt-25.12.5-x86_64-r1) |
 
 Каждый пакет содержит сервис, веб-интерфейс и соответствующее ядро для указанной архитектуры. Войдите на роутер под root. Проверьте версию и архитектуру командой `ubus call system board`. Пакету и базам GeoIP/GeoSite требуется место в корневой файловой системе. Штатный пакет `v2raya` конфликтует с `v2rayblisc`.
 
 ## OpenWrt 24.10.x на ARMv8
 
-Выполните в SSH-сессии на роутере под root. Если процессор отображается как **ARMv8 Processor rev 4**, установщик определит вариант пакета по архитектурам, которые принимает `opkg`. Он подключит подписанный фид своей архитектуры и установит `v2rayblisc`. Зависимости, в том числе модуль TPROXY, берутся из репозиториев самой прошивки.
+Выполните в SSH-сессии на роутере под root. Если процессор отображается как **ARMv8 Processor rev 4**, установщик определит вариант пакета по архитектурам, которые принимает `opkg`. Он подключит подписанный фид своей архитектуры и установит `v2rayblisc`. Пакет автоматически установит из этого же фида расширение `luci-app-v2rayblisc`. В LuCI откройте **Сервисы → v2rayBLISC**. На странице доступны статус, настройки, журнал и кнопка перехода в веб-интерфейс. Системные зависимости, в том числе модуль TPROXY, устанавливаются из репозиториев прошивки.
 
 ```sh
-wget -O /tmp/install-armv8.sh https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-24.10-armv8-2026.11.27-r1/install-armv8.sh && sh /tmp/install-armv8.sh
+wget -O /tmp/install-armv8.sh https://github.com/wywywywycloud/v2rayBLISC/releases/download/openwrt-24.10-armv8-2026.11.27-r2/install-armv8.sh && sh /tmp/install-armv8.sh
 ```
 
-После первой установки выполните команды из раздела «Запуск и профиль». Если фид уже подключён, для обновления введите `opkg update && opkg upgrade v2rayblisc`. Во всех четырёх IPK используются одинаковые бинарники ARMv8.0 версии `2026.11.27-r1.1d0033739e79`. [Фиды ARMv8](https://github.com/wywywywycloud/v2rayBLISC/tree/opkg-feed/24.10)
+После первой установки выполните команды из раздела «Запуск и профиль». Если фид уже подключён, для обновления введите `opkg update && opkg upgrade v2rayblisc`. Во всех четырёх IPK используются одинаковые бинарники ARMv8.0 версии `2026.11.27-r2.0f23c288efa3`. [Фиды ARMv8](https://github.com/wywywywycloud/v2rayBLISC/tree/opkg-feed/24.10)
 
 ## OpenWrt 24.10.5
 
@@ -52,7 +52,7 @@ wget -O /tmp/install-armv8.sh https://github.com/wywywywycloud/v2rayBLISC/releas
   . /etc/openwrt_release
   case "$DISTRIB_ARCH" in
     x86_64) version=2026.11.18-r1; sum=52ad5eb1ba285d28a086a0166cbf6ac68b3b27883c8a83680685982e8cfa373e ;;
-    aarch64_cortex-a53) version=2026.11.27-r1; sum=64e6366304ff54f5e82f4a6e4c05f5c4ff6edc341767b8c5f3c8a90d37c346d7 ;;
+    aarch64_cortex-a53) version=2026.11.27-r2; sum=919344dc3336a6764e60a2f06844f1fce1d72e3a215b66482f1ab3c3bdca5a1e ;;
     *) exit 1 ;;
   esac
   pkg=v2rayblisc_${version}_${DISTRIB_ARCH}.ipk
