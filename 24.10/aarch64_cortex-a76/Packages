@@ -1,5 +1,5 @@
 Package: v2rayblisc
-Version: 2026.11.18-r2
+Version: 2026.11.27-r1
 Architecture: aarch64_cortex-a76
 Maintainer: wywywywycloud <100153948+wywywywycloud@users.noreply.github.com>
 Section: net
@@ -7,9 +7,9 @@ Depends: ca-bundle, ip-full, kmod-nft-tproxy, v2ray-geoip, v2ray-geosite
 Conflicts: v2raya
 License: AGPL-3.0-only AND MPL-2.0
 Source: https://github.com/wywywywycloud/v2rayBLISC
-Installed-Size: 26091520
-Filename: v2rayblisc_2026.11.18-r2_aarch64_cortex-a76.ipk
-Size: 25108235
-SHA256sum: ed6eb77fbc96a98e6af6c159450d14a4f5f5610ade489b1a613aa3f10d42214a
+Installed-Size: 26101760
+Filename: v2rayblisc_2026.11.27-r1_aarch64_cortex-a76.ipk
+Size: 25120864
+SHA256sum: 94e8564986fda612f36332f37090f83c6fc8acf46f2cfb097a860a97a68cad99
 Description: v2rayA service, web interface and matching Xray-based core
 
