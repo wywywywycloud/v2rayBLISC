@@ -177,7 +177,7 @@ brew services start v2raya        # вы: системный прокси
 <details>
 <summary><strong>OpenWrt</strong></summary>
 
-Сборки v2rayBLISC поддерживают **OpenWrt 24.10.5 x86/64** через подписанный фид opkg и **OpenWrt 25.12.5 x86/64** через подписанный APK. Оба пакета содержат сервис, веб-интерфейс и соответствующее ядро. Для Cudy WR3000S v1 (`mediatek/filogic`) с OpenWrt 24.10.5 выпущен отдельный IPK `aarch64_cortex-a53`. [Установка v2rayBLISC на OpenWrt](install/openwrt/README.md)
+v2rayBLISC поддерживает **OpenWrt 24.10.x** через подписанные фиды opkg и **OpenWrt 25.12.x** через подписанные фиды APK. Для обеих веток доступны x86_64 и ARM64 Generic, Cortex-A53, Cortex-A72 и Cortex-A76. Для Cudy WR3000S v1 подходит пакет Cortex-A53. При установке `v2rayblisc` в LuCI появляется пункт **Сервисы → v2rayBLISC**. [Установка v2rayBLISC на OpenWrt](install/openwrt/README.md)
 
 Репозиторий [v2raya-openwrt](https://github.com/v2rayA/v2raya-openwrt) и официальный репозиторий packages сейчас содержат 2.2.7.x с отдельным `xray-core`, а не описанный здесь выпуск. Для других архитектур возможна ручная установка бинарных файлов выпуска для `mips32`, `mips32le`, `arm64` или `x64` по инструкции в следующем разделе со своим init-скриптом.
 

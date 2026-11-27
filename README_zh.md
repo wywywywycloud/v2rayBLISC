@@ -177,7 +177,7 @@ brew services start v2raya        # 当前用户：系统代理
 <details>
 <summary><strong>OpenWrt</strong></summary>
 
-v2rayBLISC 支持 **OpenWrt 24.10.5 x86/64**（已签名的 opkg 软件源）和 **OpenWrt 25.12.5 x86/64**（已签名的 APK）。两个软件包均包含服务、网页界面及配套核心。OpenWrt 24.10.5 另提供适用于 Cudy WR3000S v1（`mediatek/filogic`）的 Cortex-A53 IPK。 [安装 v2rayBLISC](install/openwrt/README.md)
+v2rayBLISC 为 **OpenWrt 24.10.x** 提供签名的 opkg 软件源，为 **OpenWrt 25.12.x** 提供签名的 APK 软件源。两个系列均支持 x86_64、ARM64 Generic、Cortex-A53、Cortex-A72 和 Cortex-A76。Cudy WR3000S v1 使用 Cortex-A53 软件包。安装 `v2rayblisc` 时也会安装 LuCI 菜单。 [安装 v2rayBLISC](install/openwrt/README.md)
 
 [v2raya-openwrt](https://github.com/v2rayA/v2raya-openwrt) 软件源与官方 packages 源目前打包的是 2.2.7.x，搭配独立的 `xray-core`，不是本文描述的版本。其他架构可参考下一节手动安装 `mips32`、`mips32le`、`arm64` 或 `x64` 的发布二进制文件，并自行编写 init 脚本。
 
